@@ -32,8 +32,14 @@ include Enumerable
 # *		print arr.each{|x| x*2}						*
 # ***************************************************
 
-arr = [1,4,5,6,7,8,9]
-print arr.my_each { |x| x*2 }.to_s + "\n"	
-puts"-----------------------"				
-print arr.each{|x| x*2}						
+# Testing my_each_with_index VS each_with_index
+# ***************************************************************
+# *		arr.my_each_with_index { |x, y| print y }				*
+# *		puts"\n-----------------------"							*
+# *		arr.each_with_index{|x, y| print y}						*
+# ***************************************************************
 
+arr = [1,4,5,6,7,8,9]	
+arr.my_each_with_index { |x, y| print y }
+puts"\n-----------------------"
+arr.each_with_index{|x, y| print y}
