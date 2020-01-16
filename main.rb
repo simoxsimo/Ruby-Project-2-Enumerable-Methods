@@ -36,6 +36,11 @@ module Enumerable
 		self.my_each{ |x| return true if yield(x)}
 		false
 	end
+
+	def my_none?
+		self.my_each { |x| return false if yield(x)}
+		true
+	end
 end
 
 
@@ -77,12 +82,19 @@ include Enumerable
 
 # Testing my_any? VS any?
 # *****************************************
-# *     print arr.all?{ |x| x>9 }        *
+# *     print arr.any?{ |x| x>9 }         *
 # *     puts"\n-----------------------"   *
-# *     print arr.my_all?{|x| x>9}       *
+# *     print arr.my_any?{|x| x>9}        *
+# *****************************************
+
+# Testing my_none? VS none?
+# *****************************************
+# *     print arr.none?{ |x| x>9 }        *
+# *     puts"\n-----------------------"   *
+# *     print arr.my_none?{|x| x>9}       *
 # *****************************************
 
 arr = [1,4,5,6,7,8,9]	
-print arr.any?{ |x| x>9 }
+print arr.none?{ |x| x==9 }
 puts"\n-----------------------"
-print arr.my_any?{|x| x>9}
+print arr.my_none?{|x| x==9}
