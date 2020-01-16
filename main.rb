@@ -73,6 +73,24 @@ module Enumerable
 			counter
 		end
 	end
+
+	def my_map
+		temp = []
+		i=0
+		if self.is_a?(Array)
+			self.my_each { |x| 
+				temp[i] = yield(x) if block_given? 
+				i+=1
+			}
+			
+		else #if self.is_a?(Hash)
+			self.my_each { |x, y| 
+				temp[i] = yield(x, y) if block_given? 
+				i+=1
+			}
+		end
+		temp
+	end
 end
 
 
@@ -186,8 +204,33 @@ include Enumerable
 # *     print hash_num.count{|x, y| x==:one}             *
 # ********************************************************
 
+# Testing my_map VS map
+#
+# ********************************************************
+# *     ===============-Array Test-===============       *
+# *     print arr.my_map {|x| x*2}                       *
+# *     puts"\n-----------------------"                  *
+# *     print arr.map {|x| x*2}                          *
+# *     puts"\n-----------------------"                  *
+# *     print arr                                        *
+# *     ===============-Hash Test-===============        *
+# *     print hash_num.my_map { |x, y| x.to_s}           *
+# *     puts"\n-----------------------"                  *
+# *     print hash_num.map { |x, y| x.to_s}              *
+# *     puts"\n-----------------------"                  *
+# *     print hash_num                                   *
+# *     puts"\n$$$$$$$$$$$$$$$$$$$$$$$"                  *
+# *     print hash_num.my_map { |x, y| y*2}              *
+# *     puts"\n-----------------------"                  *
+# *     print hash_num.map { |x, y| y*2}                 *
+# *     puts"\n-----------------------"                  *
+# *     print hash_num                                   *
+# ********************************************************
+
 hash_num = {one: 1, two: 2, nine: 9, seven: 7, four: 4}
 arr = [1,4,5,6,7,8,9]
-print hash_num.my_count(7) 
+print hash_num.my_map { |x, y| y*2}
 puts"\n-----------------------"          
-print hash_num.count(7)     
+print hash_num.map { |x, y| y*2}
+puts"\n-----------------------"
+print hash_num
