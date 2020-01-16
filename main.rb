@@ -14,6 +14,18 @@ module Enumerable
 		end
 		self
 	end
+
+	def my_select
+		temp = []
+		i=0
+		self.my_each { |x|
+			if yield(x)
+				temp[i] = x
+				i+=1
+			end
+		}
+		temp
+	end
 end
 
 
@@ -27,19 +39,25 @@ include Enumerable
 
 # Testing my_each VS each
 # ***************************************************
-# *		print arr.my_each { |x| x*2 }.to_s + "\n"	*
-# *		puts"-----------------------"				*
-# *		print arr.each{|x| x*2}						*
+# *     print arr.my_each { |x| x*2 }.to_s + "\n"   *
+# *     puts"-----------------------"               *
+# *     print arr.each{|x| x*2}                     *
 # ***************************************************
 
 # Testing my_each_with_index VS each_with_index
 # ***************************************************************
-# *		arr.my_each_with_index { |x, y| print y }				*
-# *		puts"\n-----------------------"							*
-# *		arr.each_with_index{|x, y| print y}						*
+# *     arr.my_each_with_index { |x, y| print y }               *
+# *     puts"\n-----------------------"                         *
+# *     arr.each_with_index{|x, y| print y}                     *
 # ***************************************************************
 
+# Testing my_select VS select
+# *****************************************
+# *     print arr.my_select{ |x| x>4 }    *
+# *     puts"\n-----------------------"   *
+# *     print arr.select{|x| x>4}         *
+# *****************************************
 arr = [1,4,5,6,7,8,9]	
-arr.my_each_with_index { |x, y| print y }
+print arr.my_select{ |x| x>4 }
 puts"\n-----------------------"
-arr.each_with_index{|x, y| print y}
+print arr.select{|x| x>4}
