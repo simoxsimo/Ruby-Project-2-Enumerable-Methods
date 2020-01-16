@@ -41,6 +41,12 @@ module Enumerable
 		self.my_each { |x| return false if yield(x)}
 		true
 	end
+
+	def my_count(test=nil)
+		counter = 0
+		self.my_each { |x| counter += 1 if ((x == test unless test.nil?) || (yield(x) if block_given?) )}
+		counter
+	end
 end
 
 
@@ -94,7 +100,23 @@ include Enumerable
 # *     print arr.my_none?{|x| x>9}       *
 # *****************************************
 
+# Testing my_count VS count
+# *****************************************
+# *     print arr.count{ |x| x.even? }    *
+# *     puts"\n-----------------------"   *
+# *     print arr.my_count{|x| x.even?}   *
+# *     puts"\n$$$$$$$$$$$$$$$$$$$$$$$"   *
+# *     print arr.count(7)                *
+# *     puts"\n-----------------------"   *
+# *     print arr.my_count(7)             *
+# *****************************************
+
 arr = [1,4,5,6,7,8,9]	
-print arr.none?{ |x| x==9 }
+print arr.count{ |x| x.even? }
 puts"\n-----------------------"
-print arr.my_none?{|x| x==9}
+print arr.my_count{|x| x.even?}
+puts"\n$$$$$$$$$$$$$$$$$$$$$$$"
+arr = ['a','a','b','c','a']
+print arr.count("a")
+puts"\n-----------------------"
+print arr.my_count("a")
