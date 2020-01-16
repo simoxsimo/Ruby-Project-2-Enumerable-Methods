@@ -26,6 +26,11 @@ module Enumerable
 		}
 		temp
 	end
+
+	def my_all?
+		self.my_each{ |x| return false unless yield(x)}
+		true
+	end
 end
 
 
@@ -57,7 +62,15 @@ include Enumerable
 # *     puts"\n-----------------------"   *
 # *     print arr.select{|x| x>4}         *
 # *****************************************
+
+# Testing my_all? VS all?
+# *****************************************
+# *     print arr.all?{ |x| x<=9 }        *
+# *     puts"\n-----------------------"   *
+# *     print arr.my_all?{|x| x<=9}       *
+# *****************************************
+
 arr = [1,4,5,6,7,8,9]	
-print arr.my_select{ |x| x>4 }
+print arr.all?{ |x| x<=9 }
 puts"\n-----------------------"
-print arr.select{|x| x>4}
+print arr.my_all?{|x| x<=9}
