@@ -91,11 +91,29 @@ module Enumerable
 		end
 		temp
 	end
+
+	def operator (n)
+		#Fill this shit
+	end
+
+	def my_inject(start_point=nil, operator={})
+		start_point = self.first if start_point.nil? 
+		if block_given?
+			self.my_each {|x| start_point = yield(start_point, x)}
+		else #not using block but rather parameters
+			if start_point.is_a?(Symbol) # in case I run my_inject with only one argument which is the operator
+				operator = start_point
+				operator = operator.to_proc
+				start_point = self.first
+				self.my_each {|x| start_point = operator.call(start_point, x) if self.first != x}
+			else
+				operator = operator.to_proc
+				self.my_each {|x| start_point = operator.call(start_point, x)} 
+			end
+		end
+		start_point
+	end
 end
-
-
-
-
 
 include Enumerable
 
@@ -107,16 +125,16 @@ include Enumerable
 
 # Testing my_each VS each
 #
-# ***************************************************
-# *     ===============-Array Test-===============  *
-# *     print arr.my_each { |x| x*2 }.to_s + "\n"   *
-# *     puts"-----------------------"               *
-# *     print arr.each{|x| x*2}                     *
-# *     ===============-Hash Test-===============   *
-# *     print hash_num.each{|x, y| y*2}             *
-# *     puts"\n--------------"                      *   
-# *     print hash_num.my_each {|x, y| y*2}         *
-# ***************************************************
+# ********************************************************
+# *     ===============-Array Test-===============       *
+# *     print arr.my_each { |x| x*2 }.to_s + "\n"        *
+# *     puts"-----------------------"                    *
+# *     print arr.each{|x| x*2}                          *
+# *     ===============-Hash Test-===============        *
+# *     print hash_num.each{|x, y| y*2}                  *
+# *     puts"\n--------------"                           *   
+# *     print hash_num.my_each {|x, y| y*2}              *
+# ********************************************************
 
 # Testing my_each_with_index VS each_with_index
 #
@@ -227,10 +245,65 @@ include Enumerable
 # *     print hash_num                                   *
 # ********************************************************
 
+# Testing my_inject VS inject
+#
+# ********************************************************
+# *     ===============-Array Test-===============       *
+# *                                                      *
+# *     1-test case: Passing a block                     *
+# *     ##########################################       *
+# *     print arr.my_inject{ |tot, x| tot*x}             *
+# *     puts"\n-----------------------"                  *
+# *     print arr.inject{ |tot, x| tot*x}                *
+# *     puts"\n-----------------------"                  *
+# *     print arr                                        *
+# *     2-test case: block with the first parameter      *
+# *     ##########################################       *
+# *     print arr.my_inject(0){|tot, x| tot-x}           *
+# *     puts"\n-----------------------"                  *
+# *     print arr.inject(0){|tot, x| tot-x}              *
+# *     puts"\n-----------------------"                  *
+# *     print arr                                        *
+# *     3-test case: Passing only the second parameter   *
+# *     ##########################################       *
+# *     print arr.my_inject(:-)                          *
+# *     puts"\n-----------------------"                  *
+# *     print arr.inject(:-)                             *
+# *     puts"\n-----------------------"                  *
+# *     print arr                                        *
+# *     4-test case: Passing both of the two parameters  *
+# *     ##########################################       *
+# *     print arr.my_inject(5,:-)                        *
+# *     puts"\n-----------------------"                  *
+# *     print arr.inject(5,:-)                           *
+# *     puts"\n-----------------------"                  *
+# *     print arr                                        *
+# *                                                      *
+# *     ===============-Hash Test-===============        *
+# ********************************************************
+
 hash_num = {one: 1, two: 2, nine: 9, seven: 7, four: 4}
 arr = [1,4,5,6,7,8,9]
-print hash_num.my_map { |x, y| y*2}
-puts"\n-----------------------"          
-print hash_num.map { |x, y| y*2}
-puts"\n-----------------------"
-print hash_num
+# print arr.my_inject{ |tot, x| tot*x}
+# puts"\n-----------------------"          
+# print arr.inject{ |tot, x| tot*x}
+# puts"\n-----------------------"
+# print arr
+
+# print arr.my_inject(0){|tot, x| tot-x}
+# puts"\n-----------------------"          
+# print arr.inject(0){|tot, x| tot-x}
+# puts"\n-----------------------"
+# print arr
+
+# print arr.my_inject(:-)
+# puts"\n-----------------------"          
+# print arr.inject(:-)
+# puts"\n-----------------------"
+# print arr
+
+# print arr.my_inject(5,:-)
+# puts"\n-----------------------"          
+# print arr.inject(5,:-)
+# puts"\n-----------------------"
+# print arr
