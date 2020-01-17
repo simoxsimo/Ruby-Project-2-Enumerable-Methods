@@ -92,14 +92,21 @@ module Enumerable
 		temp
 	end
 
-	def operator (n)
-		#Fill this shit
-	end
-
 	def my_inject(start_point=nil, operator={})
 		start_point = self.first if start_point.nil? 
 		if block_given?
-			self.my_each {|x| start_point = yield(start_point, x)}
+			if self.is_a?(Array)
+				self.my_each {|x| start_point = yield(start_point, x)} 
+			else # when we use hashes with inject it will convert the hash into array
+				temp=[]
+				i=0
+				self.my_each {|x, y| 
+					temp[i] = x 
+					temp[i+1] = y 
+					i+=2
+				}
+				return temp
+			end
 		else #not using block but rather parameters
 			if start_point.is_a?(Symbol) # in case I run my_inject with only one argument which is the operator
 				operator = start_point
@@ -280,30 +287,12 @@ include Enumerable
 # *     print arr                                        *
 # *                                                      *
 # *     ===============-Hash Test-===============        *
+# *     print hash_num.my_inject{ |tot, x| tot+x}        *
+# *     puts"\n-----------------------"                  *
+# *     print hash_num.inject{ |tot, x| tot+x}           *
+# *     puts"\n-----------------------"                  *
+# *     print hash_num                                   *
 # ********************************************************
 
 hash_num = {one: 1, two: 2, nine: 9, seven: 7, four: 4}
 arr = [1,4,5,6,7,8,9]
-# print arr.my_inject{ |tot, x| tot*x}
-# puts"\n-----------------------"          
-# print arr.inject{ |tot, x| tot*x}
-# puts"\n-----------------------"
-# print arr
-
-# print arr.my_inject(0){|tot, x| tot-x}
-# puts"\n-----------------------"          
-# print arr.inject(0){|tot, x| tot-x}
-# puts"\n-----------------------"
-# print arr
-
-# print arr.my_inject(:-)
-# puts"\n-----------------------"          
-# print arr.inject(:-)
-# puts"\n-----------------------"
-# print arr
-
-# print arr.my_inject(5,:-)
-# puts"\n-----------------------"          
-# print arr.inject(5,:-)
-# puts"\n-----------------------"
-# print arr
