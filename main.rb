@@ -74,17 +74,19 @@ module Enumerable
 		end
 	end
 
-	def my_map
+	def my_map(&procs)
 		temp = []
 		i=0
 		if self.is_a?(Array)
 			self.my_each { |x| 
+				temp[i] = procs.call(x)
 				temp[i] = yield(x) if block_given? 
 				i+=1
 			}
 			
 		else #if self.is_a?(Hash)
-			self.my_each { |x, y| 
+			self.my_each { |x, y|
+				temp[i] = procs.call(x, y) 
 				temp[i] = yield(x, y) if block_given? 
 				i+=1
 			}
@@ -133,6 +135,8 @@ include Enumerable
 # 
 # Array => arr = [1,4,5,6,7,8,9]
 # Hash =>  hash_num = {one: 1, two: 2, nine: 9, seven: 7, four: 4}
+# procs1 = Proc.new { |x, y| x.to_s }
+# procs2 = Proc.new { |x, y| y*2 }
 
 
 # Testing my_each VS each
@@ -238,12 +242,27 @@ include Enumerable
 #
 # ********************************************************
 # *     ===============-Array Test-===============       *
+# *                                                      *
+# *     1 - Passing a block                              *
+# *     ##########################################       *
 # *     print arr.my_map {|x| x*2}                       *
 # *     puts"\n-----------------------"                  *
 # *     print arr.map {|x| x*2}                          *
 # *     puts"\n-----------------------"                  *
 # *     print arr                                        *
+# *     2 - Passing a proc                               *
+# *     ##########################################       *
+# *     procs = Proc.new { |x| x*2 }                     *
+# *     print arr.my_map(&procs)                         *
+# *     puts"\n-----------------------"                  *
+# *     print arr.map(&procs)                            *
+# *     puts"\n-----------------------"                  *
+# *     print arr                                        *
+# *                                                      *
 # *     ===============-Hash Test-===============        *
+# *                                                      *
+# *     1 - Passing a block                              *
+# *     ##########################################       *
 # *     print hash_num.my_map { |x, y| x.to_s}           *
 # *     puts"\n-----------------------"                  *
 # *     print hash_num.map { |x, y| x.to_s}              *
@@ -253,6 +272,21 @@ include Enumerable
 # *     print hash_num.my_map { |x, y| y*2}              *
 # *     puts"\n-----------------------"                  *
 # *     print hash_num.map { |x, y| y*2}                 *
+# *     puts"\n-----------------------"                  *
+# *     print hash_num                                   *
+# *     2 - Passing a proc                               *
+# *     ##########################################       *
+# *     procs1 = Proc.new { |x, y| x.to_s }              *
+# *     procs2 = Proc.new { |x, y| y*2 }                 *
+# *     print hash_num.my_map(&procs1)                   *
+# *     puts"\n-----------------------"                  *
+# *     print hash_num.map(&procs1)                      *
+# *     puts"\n-----------------------"                  *
+# *     print hash_num                                   *
+# *     puts"\n$$$$$$$$$$$$$$$$$$$$$$$"                  *
+# *     print hash_num.my_map(&procs2)                   *
+# *     puts"\n-----------------------"                  *
+# *     print hash_num.map(&procs2)                      *
 # *     puts"\n-----------------------"                  *
 # *     print hash_num                                   *
 # ********************************************************
@@ -299,8 +333,9 @@ include Enumerable
 # *     print hash_num                                   *
 # ********************************************************
 
-hash_num = {one: 1, two: 2, nine: 9, seven: 7, four: 4}
-arr = [1,4,5,6,7,8,9]
-arr2 = [2,4,5]
-
-print multiply_els(arr2)
+# hash_num = {one: 1, two: 2, nine: 9, seven: 7, four: 4}
+# arr = [1,4,5,6,7,8,9]
+# arr2 = [2,4,5]
+# procs1 = Proc.new { |x, y| x.to_s }
+# procs2 = Proc.new { |x, y| y*2 }
+                                          
