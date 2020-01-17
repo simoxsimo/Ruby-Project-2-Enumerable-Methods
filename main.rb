@@ -96,7 +96,7 @@ module Enumerable
 		start_point = self.first if start_point.nil? 
 		if block_given?
 			if self.is_a?(Array)
-				self.my_each {|x| start_point = yield(start_point, x)} 
+				self.my_each {|x| start_point = yield(start_point, x) if self.first != x} 
 			else # when we use hashes with inject it will convert the hash into array
 				temp=[]
 				i=0
@@ -119,6 +119,11 @@ module Enumerable
 			end
 		end
 		start_point
+	end
+
+	def multiply_els(array)
+		array.my_inject(:*)
+		# array.my_inject() {|tot, x| tot*x} # is working too
 	end
 end
 
@@ -296,3 +301,6 @@ include Enumerable
 
 hash_num = {one: 1, two: 2, nine: 9, seven: 7, four: 4}
 arr = [1,4,5,6,7,8,9]
+arr2 = [2,4,5]
+
+print multiply_els(arr2)
