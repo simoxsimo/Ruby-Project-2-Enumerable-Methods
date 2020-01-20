@@ -1,143 +1,184 @@
+# frozen_string_literal: true
+
+# This class contains all the custom made Enumerable methods
+# rubocop: disable Metrics/ModuleLength
 module Enumerable
-	def my_each
-		(self.size).times { |i|
-			yield(self[i]) if (block_given? && self.is_a?(Array))
-			yield(self.keys[i], self.values[i]) if (block_given? && self.is_a?(Hash))
-		}
-		self
-	end
+  def my_each
+    me = self
+    me.size.times do |i|
+      yield(me[i]) if block_given? && me.is_a?(Array)
+      yield(me.keys[i], me.values[i]) if block_given? && me.is_a?(Hash)
+    end
+    me
+  end
 
-	def my_each_with_index
-		for i in (0..self.size-1)
-			yield(self[i], i) if (block_given? && self.is_a?(Array))
-			yield(self.values[i], i) if (block_given? && self.is_a?(Hash))
-		end
-		self
-	end
+  def my_each_with_index
+    me = self
+    me.size.times do |i|
+      yield(me[i], i) if block_given? && me.is_a?(Array)
+      yield(me.values[i], i) if block_given? && me.is_a?(Hash)
+    end
+    me
+  end
 
-	def my_select
-		if self.is_a?(Array)
-			temp = []
-			i=0
-			self.my_each { |x|
-				if yield(x)
-					temp[i] = x
-					i+=1
-				end
-			}
-			temp
-		else #if self.is_a?(Hash)
-			temp = {}
-			self.my_each { |x, y| temp[x] = y if yield(x, y)}
-			temp
-		end
-	end
+  def my_select
+    me = self
+    temp = me.is_a?(Array) ? [] : {}
+    if me.is_a?(Array)
+      me.my_each { |x| temp << x if yield(x) }
+    else # if me.is_a?(Hash)
+      me.my_each { |x, y| temp[x] = y if yield(x, y) }
+    end
+    temp
+  end
 
-	def my_all?
-		if self.is_a?(Array)
-			self.my_each{ |x| return false unless yield(x)}  
-			true
-		else #if self.is_a?(Hash)
-			self.my_each{ |x, y| return false unless yield(x, y)}
-			true
-		end
-	end
+  def my_all?
+    me = self
+    if me.is_a?(Array)
+      me.my_each { |x| return false unless yield(x) }
+    else # if me.is_a?(Hash)
+      me.my_each { |x, y| return false unless yield(x, y) }
+    end
+    true
+  end
 
-	def my_any?
-		if self.is_a?(Array)
-			self.my_each{ |x| return true if yield(x)}
-			false
-		else #if self.is_a?(Hash)
-			self.my_each{ |x, y| return true if yield(x, y)}
-			false
-		end
-	end
+  def my_any?
+    me = self
+    if me.is_a?(Array)
+      me.my_each { |x| return true if yield(x) }
+    else # if me.is_a?(Hash)
+      me.my_each { |x, y| return true if yield(x, y) }
+    end
+    false
+  end
 
-	def my_none?
-		if self.is_a?(Array)
-			self.my_each { |x| return false if yield(x)}
-			true
-		else #if self.is_a?(Hash)
-			self.my_each { |x, y| return false if yield(x, y)}
-			true
-		end
-	end
+  def my_none?
+    me = self
+    if me.is_a?(Array)
+      me.my_each { |x| return false if yield(x) }
+    else # if me.is_a?(Hash)
+      me.my_each { |x, y| return false if yield(x, y) }
+    end
+    true
+  end
 
-	def my_count(test=nil)
-		counter = 0
-		if self.is_a?(Array)
-			self.my_each { |x| counter += 1 if ((x == test unless test.nil?) || (yield(x) if block_given?) )}
-			counter
-		else #if self.is_a?(Hash)
-			self.my_each { |x, y| counter += 1 if ((y == test unless test.nil?) || (yield(x, y) if block_given?) )} # when passing value per argument in the original method 'count' it doesn't work for example try this: "print hash_num.count(7)" it will return 0 but in my_count method it will count the number of 7
-			counter
-		end
-	end
+  # my_count_block_array
+  def array_c1(mee, counter)
+    mee.my_each { |x| counter += 1 if yield(x) }
+    counter
+  end
 
-	def my_map(&procs)
-		temp = []
-		i=0
-		if self.is_a?(Array)
-			self.my_each { |x| 
-				temp[i] = procs.call(x)
-				temp[i] = yield(x) if block_given? 
-				i+=1
-			}
-			
-		else #if self.is_a?(Hash)
-			self.my_each { |x, y|
-				temp[i] = procs.call(x, y) 
-				temp[i] = yield(x, y) if block_given? 
-				i+=1
-			}
-		end
-		temp
-	end
+  # my_count_block_hash
+  def h_c1(mee, counter)
+    mee.my_each { |x, y| counter += 1 if yield(x, y) }
+    counter
+  end
 
-	def my_inject(start_point=nil, operator={})
-		start_point = self.first if start_point.nil? 
-		if block_given?
-			if self.is_a?(Array)
-				self.my_each {|x| start_point = yield(start_point, x) if self.first != x} 
-			else # when we use hashes with inject it will convert the hash into array
-				temp=[]
-				i=0
-				self.my_each {|x, y| 
-					temp[i] = x 
-					temp[i+1] = y 
-					i+=2
-				}
-				return temp
-			end
-		else #not using block but rather parameters
-			if start_point.is_a?(Symbol) # in case I run my_inject with only one argument which is the operator
-				operator = start_point
-				operator = operator.to_proc
-				start_point = self.first
-				self.my_each {|x| start_point = operator.call(start_point, x) if self.first != x}
-			else
-				operator = operator.to_proc
-				self.my_each {|x| start_point = operator.call(start_point, x)} 
-			end
-		end
-		start_point
-	end
+  # my_count_parameter_array
+  def array_c2(mee, counter, par)
+    mee.my_each { |x| counter += 1 if x == par }
+    counter
+  end
 
-	def multiply_els(array)
-		array.my_inject(:*)
-		# array.my_inject() {|tot, x| tot*x} # is working too
-	end
+  # my_count_parameter_hash
+  def h_c2(mee, counter, par)
+    mee.my_each { |_x, y| counter += 1 if y == par }
+    counter
+  end
+
+  def my_count(val = nil)
+    me = self
+    c = 0
+    return me.size if val.nil? && block_given? == false
+
+    c = if me.is_a?(Array)
+          block_given? ? array_c1(me, c) { |x| yield(x) } : array_c2(me, c, val)
+        else # if me.is_a?(Hash)
+          block_given? ? h_c1(me, c) { |x, y| yield(x, y) } : h_c2(me, c, val)
+        end
+    c
+  end
+
+  # rubocop: disable Metrics/MethodLength
+  def my_map(&procs)
+    me = self
+    temp = []
+    i = 0
+    if me.is_a?(Array)
+      me.my_each do |x|
+        temp[i] = procs.call(x)
+        temp[i] = yield(x) if block_given?
+        i += 1
+      end
+    else # if me.is_a?(Hash)
+      me.my_each do |x, y|
+        temp[i] = procs.call(x, y)
+        temp[i] = yield(x, y) if block_given?
+        i += 1
+      end
+    end
+    temp
+  end
+
+  def my_inject_hash(mee)
+    temp = []
+    i = 0
+    mee.my_each do |x, y|
+      temp[i] = x
+      temp[i + 1] = y
+      i += 2
+    end
+    temp
+  end
+
+  def my_inject_array_block(mee, start = nil)
+    if start.nil?
+      start = mee.first
+      mee.my_each { |x| start = yield(start, x) if mee.first != x }
+    else
+      mee.my_each { |x| start = yield(start, x) }
+    end
+    start
+  end
+
+  def my_inject_array_proc(mee, start = nil, opr = {})
+    if start.is_a?(Symbol) # no block only second argument "operator"
+      opr = start
+      opr = opr.to_proc
+      start = mee.first
+      mee.my_each { |x| start = opr.call(start, x) if mee.first != x }
+    else
+      opr = opr.to_proc
+      mee.my_each { |x| start = opr.call(start, x) }
+    end
+    start
+  end
+
+  def my_inject(start = nil, operator = {})
+    me = self
+    # when we use hashes with inject it will convert the hash into array
+    return my_inject_hash(me) { |x, y| } unless me.is_a?(Array)
+
+    start = if block_given?
+              my_inject_array_block(me, start) { |tot, x| yield(tot, x) }
+            else
+              my_inject_array_proc(me, start, operator)
+            end
+    start
+  end
+  # rubocop: enable Metrics/MethodLength
+
+  def multiply_els(array)
+    array.my_inject(:*)
+    # array.my_inject() {|tot, x| tot*x} # is working too
+  end
 end
+# rubocop: enable Metrics/ModuleLength
 
-include Enumerable
-
-# Test 
-# 
+# Test
+#
 # Array => arr = [1,4,5,6,7,8,9]
 # Hash =>  hash_num = {one: 1, two: 2, nine: 9, seven: 7, four: 4}
-# procs1 = Proc.new { |x, y| x.to_s }
-# procs2 = Proc.new { |x, y| y*2 }
-
 
 # Testing my_each VS each
 #
@@ -148,7 +189,7 @@ include Enumerable
 # *     print arr.each{|x| x*2}                          *
 # *     ===============-Hash Test-===============        *
 # *     print hash_num.each{|x, y| y*2}                  *
-# *     puts"\n--------------"                           *   
+# *     puts"\n--------------"                           *
 # *     print hash_num.my_each {|x, y| y*2}              *
 # ********************************************************
 
@@ -336,6 +377,6 @@ include Enumerable
 # hash_num = {one: 1, two: 2, nine: 9, seven: 7, four: 4}
 # arr = [1,4,5,6,7,8,9]
 # arr2 = [2,4,5]
+# procs = Proc.new { |x| x*2 }
 # procs1 = Proc.new { |x, y| x.to_s }
 # procs2 = Proc.new { |x, y| y*2 }
-                                          
