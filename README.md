@@ -12,23 +12,25 @@
 
 ## Description of the project 
 
->The purpose of this project is to implement the following Enumerable Methods:
-each
-each_with_index
-select
-all?
-any?
-none?
-count
-map
-inject
+The purpose of this project is to implement the following Enumerable Methods:
+*  each
+*  each_with_index
+*  select
+*  all?
+*  any?
+*  none?
+*  count
+*  map
+*  inject
 
->Hashes are included in "my_" custom methods
+## Additional points
+```
+Hashes are also included in "my_" custom methods
 
->Extra methods added to bypass rubocop complexity conventions
+Extra methods added to bypass rubocop complexity conventions
 
->rubocop: disabled for module number of lines (exeeds 100 lines) & for my_map methode length
-
+Rubocop: disabled for module number of lines (exeeds 100 lines) & for my_map methode length
+```
 ## Built with
 <ul>
   <li>Ruby</li>
