@@ -29,7 +29,7 @@ Hashes are also included in "my_" custom methods
 
 Extra methods added to bypass rubocop complexity conventions
 
-Rubocop: disabled for module number of lines (exeeds 100 lines) & for my_map methode length
+"Rubocop: disabled" for module number of lines (exeeds 100 lines) & for my_map method length
 ```
 ## Built with
 <ul>
