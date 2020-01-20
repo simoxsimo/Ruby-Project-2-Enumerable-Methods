@@ -119,6 +119,7 @@ module Enumerable
     end
     temp
   end
+  # rubocop: enable Metrics/MethodLength
 
   def my_inject_hash(mee)
     temp = []
@@ -166,7 +167,6 @@ module Enumerable
             end
     start
   end
-  # rubocop: enable Metrics/MethodLength
 
   def multiply_els(array)
     array.my_inject(:*)
